@@ -6,6 +6,14 @@ export const fromStringImpl = (just) => (nothing) => (s) => {
     return nothing;
   }
 };
+export const fromNumberImpl = (just) => (nothing) => (n) => {
+  try {
+    var x = BigInt(n);
+    return just(x);
+  } catch (err) {
+    return nothing;
+  }
+};
 
 export const fromInt = (n) => BigInt(n);
 

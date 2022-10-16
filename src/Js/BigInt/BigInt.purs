@@ -4,6 +4,7 @@ module Js.BigInt.BigInt
   , asIntN
   , asUintN
   , fromInt
+  , fromNumber
   , fromString
   , fromTLInt
   , not
@@ -47,6 +48,18 @@ fromString = fromStringImpl Just Nothing
 
 -- | Convert an integer to a BigInt.
 foreign import fromInt :: Int -> BigInt
+
+-- | FFI wrapper to parse a Number into a BigInt.
+foreign import fromNumberImpl
+  :: forall a
+   . (a -> Maybe a)
+  -> Maybe a
+  -> Number
+  -> Maybe BigInt
+
+-- | Convert a Number to a BigInt. The fractional part is truncated.
+fromNumber :: Number -> Maybe BigInt
+fromNumber = fromNumberImpl Just Nothing
 
 -- Note: this function should not be exported!
 -- It's only safe if used with type-level integers.
