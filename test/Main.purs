@@ -26,6 +26,7 @@ runSmallInt (SmallInt n) = n
 
 -- | Arbitrary instance for BigInt
 newtype TestBigInt = TestBigInt BigInt
+
 derive newtype instance Eq TestBigInt
 derive newtype instance Ord TestBigInt
 derive newtype instance Semiring TestBigInt
@@ -35,21 +36,24 @@ derive newtype instance CommutativeRing TestBigInt
 instance Arbitrary TestBigInt where
   arbitrary = do
     n <- (fromMaybe zero <<< fromString) <$> digitString
-    op <- elements (cons' identity [negate])
+    op <- elements (cons' identity [ negate ])
     pure (TestBigInt (op n))
-    where digits :: Gen Int
-          digits = chooseInt 0 9
-          digitString :: Gen String
-          digitString = (fold <<< map show) <$> (resize 50 $ arrayOf digits)
+    where
+    digits :: Gen Int
+    digits = chooseInt 0 9
+
+    digitString :: Gen String
+    digitString = (fold <<< map show) <$> (resize 50 $ arrayOf digits)
 
 -- | Convert SmallInt to BigInt
 fromSmallInt :: SmallInt -> BigInt
 fromSmallInt = fromInt <<< runSmallInt
 
 -- | Test if a binary relation holds before and after converting to BigInt.
-testBinary :: (BigInt -> BigInt -> BigInt)
-           -> (Int -> Int -> Int)
-           -> Effect Unit
+testBinary
+  :: (BigInt -> BigInt -> BigInt)
+  -> (Int -> Int -> Int)
+  -> Effect Unit
 testBinary f g = quickCheck (\x y -> (fromInt x) `f` (fromInt y) == fromInt (x `g` y))
 
 main :: Effect Unit
@@ -75,42 +79,12 @@ main = do
   assert $ fromString "0b100" == Just four
   assert $ fromString "0xff" == fromString "255"
 
-  log "Rendering bigints as strings with a different base"
-  -- assert $ toBase 2 four == "100"
-  -- assert $ (toBase 16 <$> fromString "255") == Just "ff"
-  assert $ toString (fromInt 12345) == "12345"
-
-  log "Converting bigints to arrays with a different base"
-  -- assert $ NEA.toArray (digitsInBase 2 four).value == [1, 0, 0]
-  -- assert $ (NEA.toArray <<< _.value <<< digitsInBase 16 <$>
-  --          fromString "255") == Just [15, 15]
-  -- assert $ NEA.toArray (digitsInBase 10 $ fromInt 12345).value
-  --          == [1, 2, 3, 4, 5]
-
-  -- assert $ toBase' 2 four == unsafePartial unsafeFromString "100"
-  -- assert $ (toBase' 16 <$> fromString "255") == NES.fromString "ff"
-  -- assert $ toNonEmptyString (fromInt 12345)
-  --          == unsafePartial unsafeFromString "12345"
-
-  -- log "Converting from Number to BigInt"
-  -- assert $ fromNumber 0.0 == Just zero
-  -- assert $ fromNumber 3.4 == Just three
-  -- assert $ fromNumber (-3.9) == Just (-three)
-  -- assert $ fromNumber 1.0e7 == Just (fromInt 10000000)
-  -- assert $ fromNumber 1.0e47 == fromString "100000000000000004384584304507619735463404765184"
-  -- quickCheck (\x -> Just (fromInt x) == fromNumber (Int.toNumber x))
-
   log "Conversions between String, Int and BigInt should not loose precision"
   quickCheck (\n -> fromString (show n) == Just (fromInt n))
-  -- quickCheck (\n -> Int.toNumber n == toNumber (fromInt n))
 
   log "Binary relations between integers should hold before and after converting to BigInt"
   testBinary (+) (+)
   testBinary (-) (-)
-  -- testBinary mod mod
-  -- testBinary div div
-  -- testBinary quot Int.quot
-  -- testBinary rem Int.rem
 
   -- To test the multiplication, we need to make sure that Int does not overflow
   quickCheck (\x y -> fromSmallInt x * fromSmallInt y == fromInt (runSmallInt x * runSmallInt y))
@@ -121,20 +95,12 @@ main = do
   log "compare, (==), even, odd should be the same before and after converting to BigInt"
   quickCheck (\x y -> compare x y == compare (fromInt x) (fromInt y))
   quickCheck (\x y -> (fromSmallInt x == fromSmallInt y) == (runSmallInt x == runSmallInt y))
-  -- quickCheck (\x -> Int.even x == even (fromInt x))
-  -- quickCheck (\x -> Int.odd x == odd (fromInt x))
 
   log "pow should perform integer exponentiation and yield 0 for negative exponents"
   assert $ three `pow` four == fromInt 81
-  assert $ (spy "2" $  three `pow` -two) == (spy "zero" zero)
+  assert $ (spy "2" $ three `pow` -two) == (spy "zero" zero)
   assert $ (spy "3" $ three `pow` zero) == one
   assert $ zero `pow` zero == one
-
-  -- log "Prime numbers"
-  -- assert $ filter (prime <<< fromInt) (range 2 20) == [2, 3, 5, 7, 11, 13, 17, 19]
-
-  -- log "Absolute value"
-  -- quickCheck $ \(TestBigInt x) -> abs x == if x > zero then x else (-x)
 
   log "Logic"
   assert $ (not <<< not) one == one
@@ -151,13 +117,7 @@ main = do
   Data.checkOrd prxBigInt
   Data.checkSemiring prxBigInt
   Data.checkRing prxBigInt
-  -- Data.checkEuclideanRing prxBigInt
   Data.checkCommutativeRing prxBigInt
-
-  -- log "Infinity and NaN"
-  -- assert $ fromNumber infinity == Nothing
-  -- assert $ fromNumber (-infinity) == Nothing
-  -- assert $ fromNumber nan == Nothing
 
   log "Converting BigInt to Int"
   -- assert $ (fromString "0" <#> asIntN 64) == Just 0
@@ -179,7 +139,3 @@ main = do
   log "Type Level Int creation"
   assert $ toString (fromTLInt (Proxy :: Proxy 921231231322337203685124775809)) == "921231231322337203685124775809"
   assert $ toString (fromTLInt (Proxy :: Proxy (-921231231322337203685124775809))) == "-921231231322337203685124775809"
-
--- main :: Effect Unit
--- main = launchAff_ $ runSpec [consoleReporter] do
---   BigIntSpec.spec
