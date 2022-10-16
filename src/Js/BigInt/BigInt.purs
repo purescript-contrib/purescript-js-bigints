@@ -132,6 +132,9 @@ instance Ord BigInt where
 -- | A decimal representation of the `BigInt` as a `String`.
 foreign import toString :: BigInt -> String
 
+instance Show BigInt where
+  show = toString
+  
 -- | Clamps a BigInt value to the given number of bits, and returns that value as a signed integer.
 foreign import asIntN :: Int -> BigInt -> BigInt
 
