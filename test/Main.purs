@@ -7,7 +7,7 @@ import Debug (spy)
 import Effect (Effect)
 import Effect.Console (log)
 import Js.BigInt.BigInt (BigInt, and, fromInt, fromString, fromTLInt, not, or, pow, shl, shr, toString, xor)
-import Prelude (class CommutativeRing, class Eq, class Ord, class Ring, class Semiring, Unit, bind, compare, discard, identity, map, negate, one, pure, show, zero, ($), (*), (+), (-), (<$>), (<<<), (==))
+import Prelude (class CommutativeRing, class Eq, class EuclideanRing, class Ord, class Ring, class Semiring, Unit, bind, compare, discard, identity, map, negate, one, pure, show, zero, ($), (*), (+), (-), (<$>), (<<<), (==))
 import Test.Assert (assert)
 import Test.QuickCheck (quickCheck)
 import Test.QuickCheck.Arbitrary (class Arbitrary)
@@ -32,6 +32,7 @@ derive newtype instance Ord TestBigInt
 derive newtype instance Semiring TestBigInt
 derive newtype instance Ring TestBigInt
 derive newtype instance CommutativeRing TestBigInt
+derive newtype instance EuclideanRing TestBigInt
 
 instance Arbitrary TestBigInt where
   arbitrary = do
@@ -118,6 +119,7 @@ main = do
   Data.checkSemiring prxBigInt
   Data.checkRing prxBigInt
   Data.checkCommutativeRing prxBigInt
+  -- Data.checkEuclideanRing prxBigInt
 
   log "Converting BigInt to Int"
   -- assert $ (fromString "0" <#> asIntN 64) == Just 0

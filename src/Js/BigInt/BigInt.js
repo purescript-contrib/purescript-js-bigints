@@ -25,7 +25,23 @@ export const biMul = (x) => (y) => x * y;
 
 export const biSub = (x) => (y) => x - y;
 
-export const biMod = (x) => (y) => x % y;
+export const biMod = (x) => (y) => {
+  if (y === 0n)
+    return 0n;
+  const yy = y < 0n ? -y : y;
+  return ((x % yy) + yy) % yy;
+}
+
+export const biDiv = (x) => (y) => {
+  if (y === 0n) return 0n;
+  const xx = x - biMod(x)(y);
+  return y > 0n ? (xx / y) : -(xx / -y);
+}
+
+export const biDegree = (x) => {
+  const xx = x < 0n ? -x : x;
+  return BigInt.asIntN(32, xx > 2147483647n ? 2147483647n : xx);
+}
 
 export const biZero = 0n;
 
