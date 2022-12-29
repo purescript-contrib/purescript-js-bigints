@@ -31,7 +31,7 @@ export const biZero = 0n;
 
 export const biOne = 1n;
 
-export const pow = (x) => (y) => y >= 0 ?  x ** y : 0;
+export const pow = (x) => (y) => y >= 0n ?  x ** y : 0n;
 
 export const not = (x) => ~x;
 
