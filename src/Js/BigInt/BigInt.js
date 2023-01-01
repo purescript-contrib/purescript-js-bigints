@@ -71,3 +71,5 @@ export const toString = (x) => x.toString();
 
 export const asIntN = (bits) => (n) => BigInt.asIntN(bits, n);
 export const asUintN = (bits) => (n) => BigInt.asUintN(bits, n);
+
+export const toStringAs = (radix) => (i) => i.toString(radix);
