@@ -91,9 +91,17 @@ foreign import biSub :: BigInt -> BigInt -> BigInt
 instance Ring BigInt where
   sub = biSub
 
+
 foreign import biMod :: BigInt -> BigInt -> BigInt
+foreign import biDiv :: BigInt -> BigInt -> BigInt
+foreign import biDegree :: BigInt -> Int
 
 instance CommutativeRing BigInt
+
+instance EuclideanRing BigInt where
+  degree = biDegree
+  div = biDiv
+  mod = biMod
 
 -- Raise an BigInt to the power of another BigInt.
 foreign import pow :: BigInt -> BigInt -> BigInt
