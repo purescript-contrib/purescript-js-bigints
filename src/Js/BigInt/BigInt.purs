@@ -14,11 +14,18 @@ module Js.BigInt.BigInt
   , shr
   , toString
   , xor
+  , even
+  , odd
+  , parity
+  , toStringAs
+  , module Exports
   )
   where
 
 import Prelude
 
+import Data.Int (Parity(..), Radix)
+import Data.Int (Parity(..), Radix, binary, octal, decimal, hexadecimal) as Exports
 import Data.Maybe (Maybe(..))
 import Data.Reflectable (class Reflectable, reflectType)
 import Prim.Int (class ToString)
@@ -148,3 +155,32 @@ foreign import asIntN :: Int -> BigInt -> BigInt
 
 -- | Clamps a BigInt value to the given number of bits, and returns that value as an unsigned integer.
 foreign import asUintN :: Int -> BigInt -> BigInt
+
+-- | Returns whether an `BigInt` is `Even` or `Odd`.
+-- |
+-- | ``` purescript
+-- | parity (fromInt 0) == Even
+-- | parity (fromInt 1) == Odd
+-- | ```
+parity :: BigInt -> Parity
+parity n = if even n then Even else Odd
+
+-- | Returns whether an `BigInt` is an even number.
+-- |
+-- | ``` purescript
+-- | even (fromInt 0) == true
+-- | even (fromInt 1) == false
+-- | ```
+even :: BigInt -> Boolean
+even x = x `and` one == zero
+
+-- | The negation of `even`.
+-- |
+-- | ``` purescript
+-- | odd (fromInt 0) == false
+-- | odd (fromInt 1) == true
+-- | ```
+odd :: BigInt -> Boolean
+odd x = x `and` one /= zero
+
+foreign import toStringAs :: Radix -> BigInt -> String

@@ -6,8 +6,8 @@ import Data.Maybe (Maybe(..), fromMaybe)
 import Debug (spy)
 import Effect (Effect)
 import Effect.Console (log)
-import Js.BigInt.BigInt (BigInt, and, fromInt, fromString, fromTLInt, not, or, pow, shl, shr, toString, xor)
-import Prelude (class CommutativeRing, class Eq, class EuclideanRing, class Ord, class Ring, class Semiring, Unit, bind, compare, discard, identity, map, negate, one, pure, show, zero, ($), (*), (+), (-), (<$>), (<<<), (==))
+import Js.BigInt.BigInt (BigInt, and, fromInt, fromString, fromTLInt, not, or, pow, shl, shr, toString, xor, even, odd, parity, toStringAs, binary, octal)
+import Prelude (class CommutativeRing, class Eq, class EuclideanRing, class Ord, class Ring, class Semiring, Unit, bind, compare, discard, identity, map, mod, negate, one, pure, show, zero, ($), (*), (+), (-), (/), (<$>), (<<<), (==))
 import Test.Assert (assert)
 import Test.QuickCheck (quickCheck)
 import Test.QuickCheck.Arbitrary (class Arbitrary)
@@ -82,10 +82,15 @@ main = do
 
   log "Conversions between String, Int and BigInt should not loose precision"
   quickCheck (\n -> fromString (show n) == Just (fromInt n))
+  assert $ toStringAs binary (fromInt 9) == "1001"
+  assert $ toStringAs octal (fromInt 10) == "12"
 
   log "Binary relations between integers should hold before and after converting to BigInt"
   testBinary (+) (+)
   testBinary (-) (-)
+--  testBinary (*) (*)
+  testBinary mod mod
+  testBinary (/) (/)
 
   -- To test the multiplication, we need to make sure that Int does not overflow
   quickCheck (\x y -> fromSmallInt x * fromSmallInt y == fromInt (runSmallInt x * runSmallInt y))
@@ -141,3 +146,9 @@ main = do
   log "Type Level Int creation"
   assert $ toString (fromTLInt (Proxy :: Proxy 921231231322337203685124775809)) == "921231231322337203685124775809"
   assert $ toString (fromTLInt (Proxy :: Proxy (-921231231322337203685124775809))) == "-921231231322337203685124775809"
+
+  log "Parity"
+  assert $ even (fromInt 42)
+  assert $ odd (fromInt 42) == false
+  assert $ odd (fromInt 31)
+  assert $ even (fromInt 31) == false

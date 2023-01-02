@@ -1,5 +1,5 @@
 { name = "js-bigints"
-, dependencies = [ "maybe", "prelude" ]
+, dependencies = [ "integers", "maybe", "prelude" ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs" ]
 , license = "MIT"

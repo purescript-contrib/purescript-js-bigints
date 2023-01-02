@@ -4,9 +4,8 @@ in      conf
     //  { sources = conf.sources # [ "test/**/*.purs" ]
         , dependencies =
               conf.dependencies
-            # [ "spec"
-              , "debug"
-              , "spec-discovery"
+            # [ "debug"
+              , "effect"
               , "quickcheck"
               , "assert"
               , "quickcheck-laws"
