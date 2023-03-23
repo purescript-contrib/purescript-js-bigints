@@ -19,6 +19,8 @@ export const fromInt = (n) => BigInt(n);
 
 export const fromTypeLevelInt = (str) => BigInt(str);
 
+export const toNumber = (n) => Number(n);
+
 export const biAdd = (x) => (y) => x + y;
 
 export const biMul = (x) => (y) => x * y;

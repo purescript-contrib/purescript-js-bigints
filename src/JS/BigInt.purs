@@ -4,6 +4,8 @@ module JS.BigInt
   , fromNumber
   , fromString
   , fromTLInt
+  , toInt
+  , toNumber
   , asIntN
   , asUintN
   , toString
@@ -24,6 +26,7 @@ module JS.BigInt
 import Prelude
 
 import Data.Int (Parity(..), Radix)
+import Data.Int as Int
 import Data.Int (Parity(..), Radix, binary, octal, decimal, hexadecimal) as Exports
 import Data.Maybe (Maybe(..))
 import Data.Reflectable (class Reflectable, reflectType)
@@ -78,6 +81,11 @@ foreign import fromTypeLevelInt ∷ String → BigInt
 -- | ```
 fromTLInt ∷ ∀ i sym. ToString i sym ⇒ Reflectable sym String ⇒ Proxy i → BigInt
 fromTLInt _ = fromTypeLevelInt (reflectType (Proxy ∷ Proxy sym))
+
+foreign import toNumber ∷ BigInt → Number
+
+toInt ∷ BigInt → Maybe Int
+toInt = toNumber >>> Int.fromNumber
 
 foreign import biAdd ∷ BigInt → BigInt → BigInt
 foreign import biMul ∷ BigInt → BigInt → BigInt
