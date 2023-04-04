@@ -87,7 +87,7 @@ fromTLInt _ = fromTypeLevelInt (reflectType (Proxy ∷ Proxy sym))
 foreign import toNumber ∷ BigInt → Number
 
 -- | Convert a BigInt to an Int.
--- | The BigInt must fall within the valid range of values for the Int type otherwise Nothing is returned.
+-- | The `BigInt` must fall within the valid range of values for the `Int` type otherwise `Nothing` is returned.
 toInt ∷ BigInt → Maybe Int
 toInt = toNumber >>> Int.fromNumber
 
