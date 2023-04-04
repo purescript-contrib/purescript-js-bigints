@@ -82,7 +82,7 @@ foreign import fromTypeLevelInt ∷ String → BigInt
 fromTLInt ∷ ∀ i sym. ToString i sym ⇒ Reflectable sym String ⇒ Proxy i → BigInt
 fromTLInt _ = fromTypeLevelInt (reflectType (Proxy ∷ Proxy sym))
 
--- | Convert a BigInt to a Number.
+-- | Convert a `BigInt` to a `Number`.
 -- | If the `BigInt` is too large then the result will be `+Infinity`. If the `BigInt` is too small (too negative) then the result will be `-Infinity`.
 foreign import toNumber ∷ BigInt → Number
 
