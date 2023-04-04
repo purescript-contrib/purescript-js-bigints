@@ -86,7 +86,7 @@ fromTLInt _ = fromTypeLevelInt (reflectType (Proxy ∷ Proxy sym))
 -- | If the `BigInt` is too large then the result will be `+Infinity`. If the `BigInt` is too small (too negative) then the result will be `-Infinity`.
 foreign import toNumber ∷ BigInt → Number
 
--- | Convert a BigInt to an Int.
+-- | Convert a `BigInt` to an `Int`.
 -- | The `BigInt` must fall within the valid range of values for the `Int` type otherwise `Nothing` is returned.
 toInt ∷ BigInt → Maybe Int
 toInt = toNumber >>> Int.fromNumber
