@@ -8,8 +8,5 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "spago": "^0.20.9"
-  }
+  "license": "ISC"
 }
