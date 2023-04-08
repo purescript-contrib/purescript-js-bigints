@@ -1,12 +1,13 @@
 module Test.Main where
 
+import Prelude
 import Data.Array.NonEmpty (cons')
 import Data.Foldable (fold)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Debug (spy)
 import Effect (Effect)
 import Effect.Console (log)
-import Js.BigInt.BigInt (BigInt, and, fromInt, fromString, fromTLInt, not, or, pow, shl, shr, toString, xor, even, odd, parity, toStringAs, binary, octal)
+import JS.BigInt (BigInt, and, fromInt, fromString, fromTLInt, not, or, pow, shl, shr, toString, xor, even, odd, parity, toInt, toStringAs, binary, octal)
 import Prelude (class CommutativeRing, class Eq, class EuclideanRing, class Ord, class Ring, class Semiring, Unit, bind, compare, discard, identity, map, mod, negate, one, pure, show, zero, ($), (*), (+), (-), (/), (<$>), (<<<), (==))
 import Test.Assert (assert)
 import Test.QuickCheck (quickCheck)
@@ -127,15 +128,11 @@ main = do
   -- Data.checkEuclideanRing prxBigInt
 
   log "Converting BigInt to Int"
-  -- assert $ (fromString "0" <#> asIntN 64) == Just 0
-  -- assert $ (fromString "2137" <#> asIntN 64) == Just 2137
-  -- assert $ (fromString "-2137" <#> asIntN 64) == Just (-2137)
-  -- assert $ (fromString "2147483647" <#> asIntN 64) == Just 2147483647
-  -- assert $ (fromString "2147483648" <#> asIntN 64) == Nothing
-  -- assert $ (fromString "-2147483648" <#> asIntN 64) == Just (-2147483648)
-  -- assert $ (fromString "-2147483649" <#> asIntN 64) == Nothing
-  -- assert $ (fromString "921231231322337203685124775809" <#> asIntN 64) == Nothing
-  -- assert $ (fromString "-922337203612312312312854775809" <#> asIntN 64) == Nothing
+  assert $ (fromString "0" >>= toInt) == Just 0
+  assert $ (fromString "2137" >>= toInt) == Just 2137
+  assert $ (fromString "-2137" >>= toInt) == Just (-2137)
+  assert $ (fromString "921231231322337203685124775809" >>= toInt) == Nothing
+  assert $ (fromString "-922337203612312312312854775809" >>= toInt) == Nothing
   -- quickCheck (\a b c ->
   --              let x = add (fromInt a) (add (fromInt b) (fromInt c))
   --              in case asIntN 64 x of
