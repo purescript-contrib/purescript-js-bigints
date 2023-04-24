@@ -3,5 +3,5 @@
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs" ]
 , license = "MIT"
-, repository = "https://github.com/rowtype-yoga/purescript-js-bigints.git"
+, repository = "https://github.com/purescript-contrib/purescript-js-bigints.git"
 }
