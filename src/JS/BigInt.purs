@@ -3,6 +3,7 @@ module JS.BigInt
   , fromInt
   , fromNumber
   , fromString
+  , fromStringAs
   , fromTLInt
   , toInt
   , toNumber
@@ -54,6 +55,23 @@ foreign import fromStringImpl ∷
 -- | ```
 fromString ∷ String → Maybe BigInt
 fromString = fromStringImpl Just Nothing
+
+foreign import fromStringAsImpl
+  :: (forall a. a -> Maybe a)
+  -> (forall a. Maybe a)
+  -> Radix
+  -> String
+  -> Maybe BigInt
+
+-- | Like `fromString`, but the integer can be specified in a different base.
+-- |
+-- | Example:
+-- | ``` purs
+-- | fromStringAs binary      "100" == Just 4
+-- | fromStringAs hexadecimal "ff"  == Just 255
+-- | ```
+fromStringAs :: Radix -> String -> Maybe BigInt
+fromStringAs = fromStringAsImpl Just Nothing
 
 -- | Convert an integer to a BigInt.
 foreign import fromInt ∷ Int → BigInt

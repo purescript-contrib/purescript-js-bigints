@@ -6,6 +6,51 @@ export const fromStringImpl = (just) => (nothing) => (s) => {
     return nothing;
   }
 };
+
+export const fromStringAsImpl = function (just) {
+  return function (nothing) {
+    return function (radix) {
+
+      var digits;
+      if (radix < 11) {
+        digits = "[0-" + (radix - 1).toString() + "]";
+      } else if (radix === 11) {
+        digits = "[0-9a]";
+      } else {
+        digits = "[0-9a-" + String.fromCharCode(86 + radix) + "]";
+      }
+      var pattern = new RegExp("^[\\+\\-]?" + digits + "+$", "i");
+
+      return function (s) {
+        // Not yet in the standard: https://github.com/tc39/proposal-number-fromstring
+        // Code converted from https://stackoverflow.com/a/55646905/1833322
+
+        /* jshint bitwise: false */
+        if (pattern.test(s)) {
+          var size = 10;
+          var factor = BigInt(radix ** size);
+          var r = 0n
+
+          for (var i = 0; i < s.length; i += size) {
+            var n = parseInt(s.slice(i, i + size), radix);
+
+            // check for NaN
+            if ((n | 0) !== n) {
+              return nothing;
+            }
+
+            r = r * factor + BigInt(n);
+          }
+
+          return just(r);
+        } else {
+          return nothing;
+        }
+      };
+    };
+  };
+};
+
 export const fromNumberImpl = (just) => (nothing) => (n) => {
   try {
     var x = BigInt(n);
