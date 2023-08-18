@@ -43,14 +43,23 @@ foreign import fromStringImpl ∷
   String →
   Maybe BigInt
 
--- | Parse a string into a `BigInt`, assuming a decimal representation. Returns
--- | `Nothing` if the parse fails.
+-- | Parse a string into a `BigInt`. Returns `Nothing` if the parse fails.
+-- | Supports decimal, binary, octal, hexadecimal and exponentiation notations.
+-- | See [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Numbers_and_dates) for more examples.
 -- |
 -- | Examples:
 -- | ```purescript
--- | fromString "42"
--- | fromString "857981209301293808359384092830482"
--- | fromString "1e100"
+-- | fromString "857981209301293808359384092830482"  -- 857981209301293808359384092830482
+-- | fromString "0b10000000000000000000000000000000" -- 2147483648
+-- | fromString "0B00000000011111111111111111111111" -- 8388607
+-- | fromString "0O755"                              -- 493
+-- | fromString "0o644"                              -- 420
+-- | fromString "0xFFFFFFFFFFFFFFFFF"                -- 295147905179352830000
+-- | fromString "0XA"                                -- 10
+-- | fromString "0e-5"                               -- 0
+-- | fromString "5e1"                                -- 50
+-- | fromString "175e-2"                             -- 1.75
+-- | fromString "1E3"                                -- 1000
 -- | ```
 fromString ∷ String → Maybe BigInt
 fromString = fromStringImpl Just Nothing
@@ -84,11 +93,11 @@ fromTLInt _ = fromTypeLevelInt (reflectType (Proxy ∷ Proxy sym))
 
 -- | Convert a `BigInt` to a `Number`.
 -- | There may be a loss of precision.
--- | If the `BigInt` is too large then the result will be `+Infinity`. If the `BigInt` is too small (too negative) then the result will be `-Infinity`.
+-- | If the `BigInt` is [larger than 9_007_199_254_740_991](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER) then the result will be `+Infinity`. If the `BigInt` is [smaller than -9_007_199_254_740_991](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MIN_SAFE_INTEGER) then the result will be `-Infinity`.
 foreign import toNumber ∷ BigInt → Number
 
 -- | Convert a `BigInt` to an `Int`.
--- | The `BigInt` must fall within the valid range of values for the `Int` type otherwise `Nothing` is returned.
+-- | If the `BigInt` is [larger than 2_147_483_647](https://pursuit.purescript.org/builtins/docs/Prim#t:Int) or [smaller than -2_147_483_648](https://pursuit.purescript.org/builtins/docs/Prim#t:Int) then `Nothing` is returned.
 toInt ∷ BigInt → Maybe Int
 toInt = toNumber >>> Int.fromNumber
 
@@ -121,10 +130,13 @@ instance EuclideanRing BigInt where
   div = biDiv
   mod = biMod
 
--- Raise an BigInt to the power of another BigInt.
+-- | Raise a BigInt to the power of another BigInt.
+-- | ```
+-- | pow (fromInt 2) (fromInt 3) -- 2^3
+-- | ```
 foreign import pow ∷ BigInt → BigInt → BigInt
 
--- | or the bits.
+-- | Or the bits.
 foreign import or ∷ BigInt → BigInt → BigInt
 
 -- | Invert the bits.
@@ -133,13 +145,16 @@ foreign import not ∷ BigInt → BigInt
 -- | Exlusive or the bits.
 foreign import xor ∷ BigInt → BigInt → BigInt
 
--- | and the bits.
+-- | And the bits.
 foreign import and ∷ BigInt → BigInt → BigInt
 
--- | shift the bits left and zero fill.
+-- | The BigInt in the first argument shifted to the left by the number of bits specified in the second argument.
+-- | Excess bits shifted off to the left are discarded, and zero bits are shifted in from the right.
 foreign import shl ∷ BigInt → BigInt → BigInt
 
--- | Shift the bits right and maintain pos/neg.
+-- | The BigInt in the first argument shifted to the right by the number of bits specified in the second argument.
+-- | Excess bits shifted off to the right are discarded, and copies of the leftmost bit are shifted in from the left.
+-- | This operation is also called "sign-propagating right shift" or "arithmetic right shift", because the sign of the resulting number is the same as the sign of the first operand.
 foreign import shr ∷ BigInt → BigInt → BigInt
 
 foreign import biEquals ∷ BigInt → BigInt → Boolean
@@ -194,4 +209,5 @@ even x = x `and` one == zero
 odd ∷ BigInt → Boolean
 odd x = x `and` one /= zero
 
+-- | Like `toString`, but the integer can be specified in a different base.
 foreign import toStringAs ∷ Radix → BigInt → String
