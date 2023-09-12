@@ -6,7 +6,7 @@ import Data.Array (foldMap)
 import Data.Array.NonEmpty (cons')
 import Data.Foldable (fold)
 import Data.Int (base36)
-import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Maybe (Maybe(..), fromMaybe, isJust)
 import Data.Monoid.Conj (Conj(..))
 import Data.Newtype (un)
 import Debug (spy)
@@ -49,7 +49,7 @@ instance Arbitrary TestBigInt where
     digits = chooseInt 0 9
 
     digitString :: Gen String
-    digitString = (fold <<< map show) <$> (resize 50 $ arrayOf digits)
+    digitString = (fold <<< map show) <$> (resize 100 $ arrayOf digits)
 
 -- | Convert SmallInt to BigInt
 fromSmallInt :: SmallInt -> BigInt
@@ -100,6 +100,10 @@ main = do
 --  testBinary (*) (*)
   testBinary mod mod
   testBinary (/) (/)
+
+  log "Can parse 256 bit numbers"
+  assert $ isJust $ fromString "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+  assert $ isJust $ fromStringAs hexadecimal "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0cbf"
 
   -- To test the multiplication, we need to make sure that Int does not overflow
   quickCheck (\x y -> fromSmallInt x * fromSmallInt y == fromInt (runSmallInt x * runSmallInt y))
