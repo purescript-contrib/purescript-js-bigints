@@ -8,6 +8,7 @@ in      conf
               , "effect"
               , "quickcheck"
               , "assert"
+              , "newtype"
               , "quickcheck-laws"
               , "arrays"
               , "console"
