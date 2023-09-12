@@ -25,7 +25,7 @@ export const fromStringAsImpl = function (just) {
           value = _value;
         }
 
-        var size = 10,
+        var size = 6,
             factor = BigInt(radix ** size),
             i = value.length % size || size,
             parts = [value.slice(0, i)];
