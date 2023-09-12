@@ -25,6 +25,8 @@ export const fromStringAsImpl = function (just) {
           value = _value;
         }
 
+        value.replace(/^0+/, '')
+
         var size = 6,
             factor = BigInt(radix ** size),
             i = value.length % size || size,
