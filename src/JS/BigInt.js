@@ -7,43 +7,43 @@ export const fromStringImpl = (just) => (nothing) => (s) => {
   }
 };
 
+// Pretty much copy/paste from https://stackoverflow.com/questions/55646698/base-36-to-bigint
 export const fromStringAsImpl = function (just) {
   return function (nothing) {
     return function (radix) {
+      return function (_value) {
 
-      var digits;
-      if (radix < 11) {
-        digits = "[0-" + (radix - 1).toString() + "]";
-      } else if (radix === 11) {
-        digits = "[0-9a]";
-      } else {
-        digits = "[0-9a-" + String.fromCharCode(86 + radix) + "]";
-      }
-      var pattern = new RegExp("^[\\+\\-]?" + digits + "+$", "i");
-
-      return function (s) {
-        // Not yet in the standard: https://github.com/tc39/proposal-number-fromstring
-        // Code converted from https://stackoverflow.com/a/55646905/1833322
-
-        /* jshint bitwise: false */
-        if (pattern.test(s)) {
-          var size = 10;
-          var factor = BigInt(radix ** size);
-          var r = 0n
-
-          for (var i = 0; i < s.length; i += size) {
-            var n = parseInt(s.slice(i, i + size), radix);
-
-            // check for NaN
-            if ((n | 0) !== n) {
-              return nothing;
-            }
-
-            r = r * factor + BigInt(n);
-          }
-
-          return just(r);
+        // Preprocess for potentially negative numbers. Since the toString 
+        // function simply prepends a '-' character for negative numbers, 
+        // we need this to make fromStringAs an inverse function.
+        var value, op;
+        if (_value[0] === "-") {
+          op = function (v) {return BigInt(-1) * v};
+          value = _value.slice(1);
         } else {
+          op = function (v) {return v};
+          value = _value;
+        }
+
+        var size = 10,
+            factor = BigInt(radix ** size),
+            i = value.length % size || size,
+            parts = [value.slice(0, i)];
+
+        while (i < value.length) parts.push(value.slice(i, i += size));
+
+        function f(acc, chunk) {
+          let n = BigInt(parseInt(chunk, radix));
+          if (n === NaN) {
+            throw new Error("Invalid number");
+          } else {
+            return acc * factor + n;
+          }
+        };
+        
+        try {
+          return just(op(parts.reduce(f, 0n)));
+        } catch (err) {
           return nothing;
         }
       };
