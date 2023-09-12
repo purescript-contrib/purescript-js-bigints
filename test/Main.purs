@@ -1,5 +1,6 @@
 module Test.Main where
 
+import Prelude hiding (not)
 
 import Data.Array (foldMap)
 import Data.Array.NonEmpty (cons')
@@ -12,7 +13,6 @@ import Debug (spy)
 import Effect (Effect)
 import Effect.Console (log)
 import JS.BigInt (BigInt, and, binary, decimal, even, fromInt, fromString, fromStringAs, fromTLInt, hexadecimal, not, octal, odd, or, pow, shl, shr, toInt, toString, toStringAs, xor)
-import Prelude (class CommutativeRing, class Eq, class EuclideanRing, class Ord, class Ring, class Semiring, Unit, bind, compare, discard, flip, identity, map, mod, negate, one, pure, show, zero, ($), (*), (+), (-), (/), (<$>), (<<<), (==), (>>=))
 import Test.Assert (assert)
 import Test.QuickCheck (quickCheck)
 import Test.QuickCheck.Arbitrary (class Arbitrary)
@@ -83,7 +83,7 @@ main = do
   quickCheck $ \(TestBigInt a) -> 
     let radixes = [binary, octal, decimal, hexadecimal, base36]
     in un Conj $ flip foldMap radixes $ \r -> 
-           Conj $ (fromStringAs r <<< toStringAs r) a == Just a
+          Conj $ (fromStringAs r $ toStringAs r a) == Just a
 
   log "Parsing strings with a different base"
   assert $ fromString "0b100" == Just four
