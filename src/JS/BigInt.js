@@ -84,8 +84,7 @@ export const biDiv = (x) => (y) => {
 }
 
 export const biDegree = (x) => {
-  const xx = x < 0n ? -x : x;
-  return BigInt.asIntN(32, xx > 2147483647n ? 2147483647n : xx);
+  return x = x < 0n ? -x : x;
 }
 
 export const biZero = 0n;

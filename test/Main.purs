@@ -125,7 +125,7 @@ main = do
   Data.checkSemiring prxBigInt
   Data.checkRing prxBigInt
   Data.checkCommutativeRing prxBigInt
-  -- Data.checkEuclideanRing prxBigInt
+  Data.checkEuclideanRing prxBigInt
 
   log "Converting BigInt to Int"
   assert $ (fromString "0" >>= toInt) == Just 0
