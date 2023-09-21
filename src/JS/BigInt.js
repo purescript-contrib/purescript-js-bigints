@@ -36,7 +36,7 @@ export const fromStringAsImpl = function (just) {
 
         function f(acc, chunk) {
           let n = BigInt(parseInt(chunk, radix));
-          if (n === NaN) {
+          if (isNaN(n)) {
             throw new Error("Invalid number");
           } else {
             return acc * factor + n;
