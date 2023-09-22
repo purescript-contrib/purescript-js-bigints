@@ -80,12 +80,12 @@ main = do
   assert $ fromString "123456789" == Just (fromInt 123456789)
   assert $ fromString "10000000" == Just (fromInt 10000000)
   quickCheck $ \(TestBigInt a) -> (fromString <<< toString) a == Just a
-{-
+
   quickCheck $ \(TestBigInt a) -> 
     let radixes = [binary, octal, decimal, hexadecimal, base36]
     in un Conj $ flip foldMap radixes $ \r -> 
           Conj $ (fromStringAs r $ toStringAs r a) == Just a
--}
+
   log "Parsing strings with a different base"
   assert $ fromString "0b100" == Just four
   assert $ fromString "0xff" == fromString "255"
@@ -104,7 +104,7 @@ main = do
 
   log "Can parse 256 bit numbers"
   assert $ isJust $ fromString "115792089237316195423570985008687907853269984665640564039457584007913129639935"
-  -- assert $ isJust $ fromStringAs hexadecimal "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0cbf"
+  assert $ isJust $ fromStringAs hexadecimal "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0cbf"
 
   -- To test the multiplication, we need to make sure that Int does not overflow
   quickCheck (\x y -> fromSmallInt x * fromSmallInt y == fromInt (runSmallInt x * runSmallInt y))
