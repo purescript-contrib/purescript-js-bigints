@@ -35,11 +35,11 @@ export const fromStringAsImpl = function (just) {
         while (i < value.length) parts.push(value.slice(i, i += size));
 
         function f(acc, chunk) {
-          let n = BigInt(parseInt(chunk, radix));
+          let n = parseInt(chunk, radix);
           if (isNaN(n)) {
             throw new Error("Invalid number");
           } else {
-            return acc * factor + n;
+            return acc * factor + BigInt(n);
           }
         };
         
