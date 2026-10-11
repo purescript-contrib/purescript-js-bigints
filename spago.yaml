@@ -1,0 +1,28 @@
+package:
+  name: js-bigints
+  description: FFI bindings for JavaScript's native BigInt
+  publish:
+    version: 2.2.2
+    license: MIT AND ISC
+    location:
+      githubOwner: purescript-contrib
+      githubRepo: purescript-js-bigints
+  dependencies:
+    - integers: ">=6.0.0 <7.0.0"
+    - maybe: ">=6.0.0 <7.0.0"
+    - prelude: ">=6.0.1 <7.0.0"
+  test:
+    main: Test.Main
+    dependencies:
+      - debug
+      - effect
+      - quickcheck
+      - assert
+      - newtype
+      - quickcheck-laws
+      - arrays
+      - console
+      - foldable-traversable
+workspace:
+  packageSet:
+    registry: 81.4.0
