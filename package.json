@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "spago -x test.dhall test"
+    "test": "spago test"
   },
   "keywords": [],
   "author": "",
